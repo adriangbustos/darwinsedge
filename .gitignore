@@ -1,0 +1,100 @@
+# ============================================
+# DARWIN'S EDGE - Git Ignore
+# ============================================
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+.next/
+out/
+
+# Environment files (SECRETS - NEVER COMMIT)
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+server/.env
+*.env
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebaseServiceAccountKey.json
+*-firebase-adminsdk-*.json
+serviceAccountKey.json
+
+# Stripe
+stripe-cli/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*.swn
+*.bak
+*~
+
+# IDE
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Misc
+*.local
+.cache/
+.parcel-cache/
+.turbo/
+
+# Optional npm cache
+.npm
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
