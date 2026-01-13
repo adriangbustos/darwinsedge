@@ -207,7 +207,7 @@ export const AccommodationsSlider = () => {
                       {current.price}
                     </p>
                   </div>
-                  <Link to="/booking">
+                  <Link to="/booking" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                     <Button
                       variant="default"
                       className="bg-primary hover:bg-teal-light text-foreground flex items-center space-x-2 py-6 px-8 transition-all duration-300 group"
