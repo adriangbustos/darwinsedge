@@ -2,10 +2,12 @@
 // DARWIN'S EDGE - Booking Context
 // ============================================
 
-import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-import { differenceInDays } from 'date-fns';
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+import { differenceInDays, format } from 'date-fns';
 import type { BookingState, BookingContextType, RoomTier } from '@/types';
 import { ROOM_DATA } from '@/types';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
@@ -59,6 +61,42 @@ interface BookingProviderProps {
 
 export function BookingProvider({ children }: BookingProviderProps) {
   const [booking, setBooking] = useState<BookingState>(() => loadBookingFromStorage());
+  const [dynamicTotalPrice, setDynamicTotalPrice] = useState<number | null>(null);
+
+  // Fetch dynamic pricing from server when booking details change
+  useEffect(() => {
+    async function fetchDynamicPrice() {
+      if (!booking.selectedRoom || !booking.checkIn || !booking.checkOut) {
+        setDynamicTotalPrice(null);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/calculate-price`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            roomTier: booking.selectedRoom,
+            checkIn: format(booking.checkIn, 'yyyy-MM-dd'),
+            checkOut: format(booking.checkOut, 'yyyy-MM-dd'),
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setDynamicTotalPrice(data.totalPrice);
+        } else {
+          // Fallback to static calculation if API fails
+          setDynamicTotalPrice(null);
+        }
+      } catch (error) {
+        console.error('Error fetching dynamic price:', error);
+        setDynamicTotalPrice(null);
+      }
+    }
+
+    fetchDynamicPrice();
+  }, [booking.selectedRoom, booking.checkIn, booking.checkOut]);
 
   const updateBooking = useCallback((updates: Partial<BookingState>) => {
     setBooking((prev) => {
@@ -98,11 +136,16 @@ export function BookingProvider({ children }: BookingProviderProps) {
   }, [booking.checkIn, booking.checkOut]);
 
   const getTotalPrice = useCallback((): number => {
+    // Use dynamic price from server if available
+    if (dynamicTotalPrice !== null) {
+      return dynamicTotalPrice;
+    }
+    // Fallback to static calculation
     if (!booking.selectedRoom) return 0;
     const nights = getNights();
     const room = ROOM_DATA[booking.selectedRoom];
     return nights * room.pricePerNight;
-  }, [booking.selectedRoom, getNights]);
+  }, [dynamicTotalPrice, booking.selectedRoom, getNights]);
 
   const value: BookingContextType = {
     booking,

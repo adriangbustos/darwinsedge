@@ -124,6 +124,7 @@ export function BookingBar({ variant = "hero", onSearch }: BookingBarProps) {
               selected={booking.checkOut || undefined}
               onSelect={handleCheckOutSelect}
               disabled={(date) => isBefore(date, minCheckOut)}
+              defaultMonth={booking.checkIn || undefined}
               initialFocus
               className="pointer-events-auto"
             />
